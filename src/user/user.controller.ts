@@ -1,19 +1,30 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { User as UserModel } from '@prisma/client';
-import { PostService } from 'src/post/post.service';
-import { UserService } from 'src/user/user.service';
+import { Controller, Post, Body, Get } from '@nestjs/common';
+import { createUserBody } from 'src/dtos/create-user-body';
+import { CreateUser } from './useCases/createUser';
+import { GetUsers } from './useCases/getAllUsers';
 
-@Controller()
+@Controller('users')
 export class UserController {
   constructor(
-    private readonly postService: PostService,
-    private readonly userService: UserService,
+    private readonly createUser: CreateUser,
+    private readonly getUsers: GetUsers,
   ) {}
 
-  @Post('user')
-  async signupUser(
-    @Body() userData: { name?: string; email: string },
-  ): Promise<UserModel> {
-    return this.userService.createUser(userData);
+  @Post()
+  async signupUser(@Body() body: createUserBody) {
+    const { email, username, message } = await this.createUser.execute(body);
+
+    return {
+      username,
+      email,
+      message,
+    };
+  }
+
+  @Get()
+  async allUsers() {
+    const { users } = await this.getUsers.execute();
+
+    return users;
   }
 }
