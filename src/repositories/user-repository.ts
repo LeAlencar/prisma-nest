@@ -6,5 +6,5 @@ export interface User {
 
 export abstract class UsersRepository {
   abstract create(user: User): Promise<void>;
-  abstract getAllUsers(): Promise<User[]>;
+  abstract getUsers(): Promise<User[]>;
 }

@@ -6,7 +6,7 @@ export class GetUsers {
   constructor(private userRepository: UsersRepository) {}
 
   async execute() {
-    const users = await this.userRepository.getAllUsers();
+    const users = await this.userRepository.getUsers();
 
     return {
       users,
