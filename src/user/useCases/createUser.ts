@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { hashSync } from 'bcryptjs';
 import { UsersRepository } from 'src/repositories/user-repository';
 
 interface UserRequest {
@@ -19,7 +20,24 @@ export class CreateUser {
 
   async execute(request: UserRequest): Promise<UserResponse> {
     const { email, username, password } = request;
-    await this.userRepository.create({ email, password, username });
+
+    const userExists = await this.userRepository.getUserByEmail(email);
+
+    if (userExists) {
+      return {
+        username: userExists.username,
+        email: userExists.email,
+        message: 'User Already exists',
+      };
+    }
+
+    const hashedPassword = hashSync(password, 10);
+
+    await this.userRepository.create({
+      email,
+      password: hashedPassword,
+      username,
+    });
 
     return {
       email,

@@ -7,4 +7,5 @@ export interface User {
 export abstract class UsersRepository {
   abstract create(user: User): Promise<void>;
   abstract getUsers(): Promise<User[]>;
+  abstract getUserByEmail(email: string): Promise<User>;
 }
